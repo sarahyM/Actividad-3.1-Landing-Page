@@ -1,33 +1,32 @@
-import type React from "react"
-import type { Metadata } from "next"
-import { Playfair_Display } from "next/font/google"
-import { Inter } from "next/font/google"
-import "./globals.css"
-import { Header } from "@/components/header"
-import { Footer } from "@/components/footer"
+import type React from "react";
+import "./globals.css";
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import { Header } from "@/components/header";
+import { Toaster } from "@/components/ui/toaster";
+import { ThemeProvider } from "@/components/theme-provider";
 
-const playfair = Playfair_Display({ subsets: ["latin"] })
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Margarita Resort & Spa | Luxury Beach Resort in Venezuela",
-  description:
-    "Experience luxury and tranquility at Margarita Resort & Spa. Located in the beautiful Margarita Island, Venezuela.",
-}
+  title: "Margarita Resort - Hotel de Lujo",
+  description: "Disfruta de una experiencia única en nuestro hotel de lujo",
+};
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={`${playfair.className} ${inter.variable}`}>
-        <Header />
-        <main>{children}</main>
-        <Footer />
+    <html lang="es" suppressHydrationWarning>
+      <body className={inter.className}>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <Header />
+          {children}
+          <Toaster />
+        </ThemeProvider>
       </body>
     </html>
-  )
+  );
 }
-
