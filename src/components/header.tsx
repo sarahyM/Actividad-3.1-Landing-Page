@@ -1,106 +1,225 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Menu, Moon, Sun } from "lucide-react";
+import { useTheme } from "next-themes";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 export function Header() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const { theme, setTheme } = useTheme();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const token = localStorage.getItem("userToken");
+    setIsLoggedIn(!!token);
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("userToken");
+    setIsLoggedIn(false);
+  };
+
+  // Handle theme toggle
+  const toggleTheme = () => {
+    setTheme(theme === "dark" ? "light" : "dark");
+  };
+
+  if (!mounted) {
+    return null;
+  }
 
   return (
-    <header className="fixed w-full z-50 bg-primary">
-      <div className="container mx-auto px-4 py-4">
-        <nav className="flex items-center justify-between">
-          <Link href="/" className="text-2xl font-serif text-white">
+    <header
+      className={`fixed top-0 left-0 right-0 z-50 bg-white/50 dark:bg-[#0a1929]/90 backdrop-blur-md shadow-sm bg-transparent"
+      }`}
+    >
+      <div className="container mx-auto px-4">
+        <div className="flex justify-between items-center h-20">
+          <Link
+            href="/"
+            className="text-2xl font-bold text-primary dark:text-white"
+          >
             Margarita Resort
           </Link>
 
-          {/* Mobile menu button */}
-          <button
-            className="md:hidden text-white"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
-            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
-
-          {/* Desktop menu */}
-          <div className="hidden md:flex items-center space-x-8 text-white">
-            <Link href="/" className="hover:text-teal-200 transition-colors">
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center space-x-8">
+            <Link
+              href="/inicio"
+              className="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-white"
+            >
               Inicio
             </Link>
             <Link
               href="/habitaciones"
-              className="hover:text-teal-200 transition-colors"
+              className="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-white"
             >
               Habitaciones
             </Link>
             <Link
-              href="/restaurantes"
-              className="hover:text-teal-200 transition-colors"
+              href="/spa"
+              className="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-white"
             >
-              Restaurantes
-            </Link>
-            <Link href="/spa" className="hover:text-teal-200 transition-colors">
               Spa
             </Link>
             <Link
               href="/actividades"
-              className="hover:text-teal-200 transition-colors"
+              className="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-white"
             >
               Actividades
             </Link>
             <Link
-              href="/reserva"
-              className="bg-white text-primary px-6 py-2 rounded-full hover:bg-teal-50 transition-colors"
+              href="/restaurantes"
+              className="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-white"
             >
-              Reservar Ahora
+              Restaurantes
             </Link>
-          </div>
 
-          {/* Mobile menu */}
-          {isMenuOpen && (
-            <div className="absolute top-full left-0 right-0 bg-primary p-4 md:hidden">
-              <div className="flex flex-col space-y-4 text-white">
-                <Link
-                  href="/"
-                  className="hover:text-teal-200 transition-colors"
-                >
-                  Inicio
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleTheme}
+              className="text-gray-700 dark:text-gray-300"
+            >
+              {theme === "dark" ? (
+                <Sun className="h-5 w-5" />
+              ) : (
+                <Moon className="h-5 w-5" />
+              )}
+            </Button>
+
+            {isLoggedIn ? (
+              <>
+                <Link href="/perfil">
+                  <Button className="text-gray-700 dark:text-gray-300">
+                    Mi Perfil
+                  </Button>
                 </Link>
-                <Link
-                  href="/habitaciones"
-                  className="hover:text-teal-200 transition-colors"
+                <Button
+                  onClick={handleLogout}
+                  className="bg-primary text-white"
                 >
-                  Habitaciones
+                  Cerrar Sesión
+                </Button>
+              </>
+            ) : (
+              <>
+                <Link href="/admin/login">
+                  <Button variant="outline">Iniciar Sesión</Button>
                 </Link>
-                <Link
-                  href="/restaurantes"
-                  className="hover:text-teal-200 transition-colors"
+                <Link href="/admin/registro">
+                  <Button className="bg-primary text-white">Registrarse</Button>
+                </Link>
+              </>
+            )}
+          </nav>
+
+          {/* Mobile Navigation */}
+          <div className="md:hidden flex items-center">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleTheme}
+              className="mr-2 text-gray-700 dark:text-gray-300"
+            >
+              {theme === "dark" ? (
+                <Sun className="h-5 w-5" />
+              ) : (
+                <Moon className="h-5 w-5" />
+              )}
+            </Button>
+
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-gray-700 dark:text-gray-300"
                 >
-                  Restaurantes
-                </Link>
-                <Link
-                  href="/spa"
-                  className="hover:text-teal-200 transition-colors"
-                >
-                  Spa
-                </Link>
-                <Link
-                  href="/actividades"
-                  className="hover:text-teal-200 transition-colors"
-                >
-                  Actividades
-                </Link>
-                <Link
-                  href="/reserva"
-                  className="bg-white text-primary px-6 py-2 rounded-full hover:bg-teal-50 transition-colors text-center"
-                >
-                  Reservar Ahora
-                </Link>
-              </div>
-            </div>
-          )}
-        </nav>
+                  <Menu className="h-6 w-6" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent
+                side="right"
+                className="bg-white dark:bg-[#0a1929] border-gray-200 dark:border-gray-800"
+              >
+                <nav className="flex flex-col space-y-4 mt-6">
+                  <Link
+                    href="/"
+                    className="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-white"
+                  >
+                    Inicio
+                  </Link>
+                  <Link
+                    href="/habitaciones"
+                    className="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-white"
+                  >
+                    Habitaciones
+                  </Link>
+                  <Link
+                    href="/spa"
+                    className="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-white"
+                  >
+                    Spa
+                  </Link>
+                  <Link
+                    href="/contacto"
+                    className="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-white"
+                  >
+                    Contacto
+                  </Link>
+                  <Link
+                    href="/reserva"
+                    className="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-white"
+                  >
+                    Reservar
+                  </Link>
+
+                  {isLoggedIn ? (
+                    <>
+                      <Link href="/perfil">
+                        <Button className="text-gray-700 dark:text-gray-300">
+                          Mi Perfil
+                        </Button>
+                      </Link>
+                      <Button
+                        onClick={handleLogout}
+                        className="bg-primary text-white"
+                      >
+                        Cerrar Sesión
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Link href="/admin/login">
+                        <Button variant="outline">Iniciar Sesión</Button>
+                      </Link>
+                      <Link href="/admin/registro">
+                        <Button className="bg-primary text-white">
+                          Registrarse
+                        </Button>
+                      </Link>
+                    </>
+                  )}
+                </nav>
+              </SheetContent>
+            </Sheet>
+          </div>
+        </div>
       </div>
     </header>
   );

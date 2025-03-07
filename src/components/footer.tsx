@@ -4,7 +4,7 @@ import Image from "next/image";
 
 export function Footer() {
   return (
-    <footer className="bg-primary text-white">
+    <footer className="mt-12 w-full bg-primary text-white rounded-t-3xl">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
@@ -99,7 +99,10 @@ export function Footer() {
               width={100}
               height={50}
             />
-            <p className="mt-2">Universidad Valle del Momboy <br /> Facultad de Ingeniería (Computación)</p>
+            <p className="mt-2">
+              Universidad Valle del Momboy <br /> Facultad de Ingeniería
+              (Computación)
+            </p>
             <p className="mt-2">Integrantes:</p>
             <p className="mt-1">
               Ocanto Sarahy C.I: 30.140.127 <br /> Norlys Castañeda C.I:
